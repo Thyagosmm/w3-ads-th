@@ -1,56 +1,51 @@
-const express = require('express');
+const express = require("express");
 const app = express();
 const PORT = 3000;
-const path = require('path');
 
-const db = require('./bd/db_user');
-
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 let books = [
-    {id: 1, title: 'Livro 1'},
-    {id: 2, title: 'Livro 2'},
-    {id: 3, title: 'Livro 3'}
+  { id: 1, title: "Livro 1" },
+  { id: 2, title: "Livro 2" },
+  { id: 3, title: "Livro 3" },
 ];
 
-app.get('/books', (req, res) => {
-    res.json(books);
+app.get("/", (req, res) => {
+  res.json(books);
+  console.log("req get");
 });
 
-app.post('/post-example', (req, res) => {
-    const newBook = req.body;
-    books.push(newBook);
-    res.json(newBook);
+app.post("/post-example", (req, res) => {
+  const newBook = req.body;
+  books.push(newBook);
+  res.json(newBook);
 });
 
-app.put('/update-book/:id', (req, res) =>{
-    const bookId = parseInt(req.params.id);
-    const newTitle = req.body.title;
+app.put("/update-book/:id", (req, res) => {
+  const bookId = parseInt(req.params.id);
+  const newTitle = req.body.title;
 
-    const bookToUpdate = books.find(book => book.id === bookId);
+  const bookToUpdate = books.find((book) => book.id === bookId);
 
-    if (bookToUpdate){
-        bookToUpdate.title = newTitle;
-        res.json(bookToUpdate);
-    }
-    else{
-        res.status(404).send("Livro não encontrado");
-    }
+  if (bookToUpdate) {
+    bookToUpdate.title = newTitle;
+    res.json(bookToUpdate);
+  } else {
+    res.status(404).send("Livro não encontrado");
+  }
 });
 
-app.delete('/delete-book/:id', (req, res) =>{
-    
-    const bookId = parseInt(req.params.id);
+app.delete("/delete-book/:id", (req, res) => {
+  const bookId = parseInt(req.params.id);
+  const indexToRemove = books.findIndex((book) => book.id === bookId);
 
-    const indexToRemove = books.findIndex(book => book.id ===bookId);
-
-    if(indexToRemove !== -1){
-        const removedBook = books.splice(indexToRemove, 1);
-        res.json(removedBook[0]);
-    } else {
-        res.status(404).send('Livro não encontrado');
-    }
+  if (indexToRemove !== -1) {
+    const removedBook = books.splice(indexToRemove, 1);
+    res.json(removedBook[0]);
+  } else {
+    res.status(404).send("Livro não encontrado");
+  }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server started on port ${PORT}`);
-});
+app.listen(PORT, console.log(`Server started on ${PORT}`));
